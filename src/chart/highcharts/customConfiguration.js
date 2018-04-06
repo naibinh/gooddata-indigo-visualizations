@@ -7,7 +7,7 @@ import {
     numberFormat
 } from '@gooddata/numberjs';
 
-import { BAR_CHART, COLUMN_CHART, LINE_CHART, PIE_CHART, AREA_CHART } from '../../VisualizationTypes';
+import { BAR_CHART, COLUMN_CHART, LINE_CHART, PIE_CHART, AREA_CHART, DONUT_CHART } from '../../VisualizationTypes';
 import { HOVER_BRIGHTNESS, MINIMUM_HC_SAFE_BRIGHTNESS } from './commonConfiguration';
 import { getLighterColor } from '../../utils/color';
 import {
@@ -390,6 +390,7 @@ function getHoverStyles(chartOptions, config) {
             };
             break;
 
+        case DONUT_CHART:
         case PIE_CHART:
             seriesMapFn = (seriesOrig) => {
                 const series = cloneDeep(seriesOrig);

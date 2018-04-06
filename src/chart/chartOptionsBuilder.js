@@ -9,7 +9,7 @@ import {
     getAttributeElementIdFromAttributeElementUri,
     isLineChart,
     isAreaChart,
-    isPieChart,
+    isPieOrDonutChart,
     isChartSupported,
     stringifyChartTypes
 } from '../utils/common';
@@ -46,11 +46,11 @@ export function validateData(limits = {}, chartOptions) {
 
     return {
         // series and categories limit
-        dataTooLarge: !isDataOfReasonableSize(chartOptions.data, isPieChart(type)
+        dataTooLarge: !isDataOfReasonableSize(chartOptions.data, isPieOrDonutChart(type)
             ? pieChartLimits
             : limits),
         // check pie chart for negative values
-        hasNegativeValue: isPieChart(type) && isNegativeValueIncluded(chartOptions.data.series)
+        hasNegativeValue: isPieOrDonutChart(type) && isNegativeValueIncluded(chartOptions.data.series)
     };
 }
 
@@ -77,7 +77,7 @@ export function getColorPalette(
     type
 ) {
     let updatedColorPalette = [];
-    const isAttributePieChart = isPieChart(type) && afm.attributes && afm.attributes.length > 0;
+    const isAttributePieChart = isPieOrDonutChart(type) && afm.attributes && afm.attributes.length > 0;
 
     if (stackByAttribute || isAttributePieChart) {
         const itemsCount = stackByAttribute ? stackByAttribute.items.length : viewByAttribute.items.length;
@@ -135,7 +135,7 @@ export function getSeriesItemData(
             viewByIndex = pointIndex;
             // stack bar chart has always just one measure
             measureIndex = 0;
-        } else if (isPieChart(type) && !viewByAttribute) {
+        } else if (isPieOrDonutChart(type) && !viewByAttribute) {
             measureIndex = pointIndex;
         }
 
@@ -149,13 +149,13 @@ export function getSeriesItemData(
         if (stackByAttribute) {
             // if there is a stackBy attribute, then seriesIndex corresponds to stackBy label index
             pointData.name = unwrap(stackByAttribute.items[seriesIndex]).name;
-        } else if (isPieChart(type) && viewByAttribute) {
+        } else if (isPieOrDonutChart(type) && viewByAttribute) {
             pointData.name = unwrap(viewByAttribute.items[viewByIndex]).name;
         } else {
             pointData.name = unwrap(measureGroup.items[measureIndex]).name;
         }
 
-        if (isPieChart(type)) {
+        if (isPieOrDonutChart(type)) {
             // add color to pie chart points from colorPalette
             pointData.color = colorPalette[pointIndex];
             // Pie charts use pointData viewByIndex as legendIndex if available instead of seriesItem legendIndex
@@ -194,7 +194,7 @@ export function getSeries(
             // if stackBy attribute is available, seriesName is a stackBy attribute value of index seriesIndex
             // this is a limitiation of highcharts and a reason why you can not have multi-measure stacked charts
             seriesItemConfig.name = stackByAttribute.items[seriesIndex].attributeHeaderItem.name;
-        } else if (isPieChart(type) && !viewByAttribute) {
+        } else if (isPieOrDonutChart(type) && !viewByAttribute) {
             // Pie charts with measures only have a single series which name would is ambiguous
             seriesItemConfig.name = measureGroup.items.map((wrappedMeasure) => {
                 return unwrap(wrappedMeasure).name;
@@ -223,7 +223,7 @@ export function generateTooltipFn(viewByAttribute, type) {
             // For some reason, highcharts ommit categories for pie charts with attribute. Use point.name instead.
             // use attribute name instead of attribute display form name
             textData.unshift([customEscape(viewByAttribute.formOf.name), customEscape(point.category || point.name)]);
-        } else if (isPieChart(type)) {
+        } else if (isPieOrDonutChart(type)) {
             // Pie charts with measure only have to use point.name instead of series.name to get the measure name
             textData[0][0] = customEscape(point.name);
         }
@@ -314,7 +314,7 @@ export function getDrillableSeries(
     type,
     afm
 ) {
-    const isMetricPieChart = isPieChart(type) && !viewByAttribute;
+    const isMetricPieChart = isPieOrDonutChart(type) && !viewByAttribute;
 
     return series.map((seriesItem, seriesIndex) => {
         let isSeriesDrillable = false;
@@ -384,7 +384,7 @@ function getCategories(type, viewByAttribute, measureGroup) {
     if (viewByAttribute) {
         return viewByAttribute.items.map(({ attributeHeaderItem }) => attributeHeaderItem.name);
     }
-    if (isPieChart(type)) {
+    if (isPieOrDonutChart(type)) {
         // Pie chart with measures only (no viewByAttribute) needs to list
         return measureGroup.items.map(wrappedMeasure => unwrap(wrappedMeasure).name);
         // Pie chart categories are later sorted by seriesItem pointValue
@@ -481,7 +481,7 @@ export function getChartOptions(
     const stacking = getStackingConfig(stackByAttribute, config);
 
     // Pie charts dataPoints are sorted by default by value in descending order
-    if (isPieChart(type)) {
+    if (isPieOrDonutChart(type)) {
         const dataPoints = series[0].data;
         const indexSortOrder = [];
         const sortedDataPoints = dataPoints.sort((pointDataA, pointDataB) => {

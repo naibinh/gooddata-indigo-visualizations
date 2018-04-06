@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import { cloneDeep, get, set, isEqual, partial } from 'lodash';
 import cx from 'classnames';
 
-import { PIE_CHART } from '../VisualizationTypes';
+import { isPieOrDonutChart } from '../utils/common';
+import { PIE_CHART } from "../VisualizationTypes";
 import Chart from './Chart';
 import Legend from './legend/Legend';
 import { initChartPlugins } from './highcharts/chartPlugins';
@@ -162,7 +163,7 @@ export default class HighChartRenderer extends PureComponent {
         }
 
         // render chart with disabled visibility based on legendItemsEnabled
-        const itemsPath = config.chart.type === PIE_CHART ? 'series[0].data' : 'series';
+        const itemsPath = isPieOrDonutChart(config.chart.type) ? 'series[0].data' : 'series';
         set(config, itemsPath, get(config, itemsPath).map((item, itemIndex) => {
             const visible = legendItemsEnabled[itemIndex] !== undefined
                 ? legendItemsEnabled[itemIndex]
@@ -183,10 +184,13 @@ export default class HighChartRenderer extends PureComponent {
             return false;
         }
 
+        let { type } = chartOptions;
+        if (isPieOrDonutChart(type)) type = PIE_CHART;
+
         const legendProps = {
             position: legend.position,
             responsive: legend.responsive,
-            chartType: chartOptions.type,
+            chartType: type,
             series: items,
             onItemClick: this.onLegendItemClick,
             legendItemsEnabled: this.state.legendItemsEnabled,

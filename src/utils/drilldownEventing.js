@@ -2,7 +2,7 @@
 import { get, debounce } from 'lodash';
 import invariant from 'invariant';
 import CustomEvent from 'custom-event';
-import { BAR_CHART, COLUMN_CHART, LINE_CHART, PIE_CHART, AREA_CHART, TABLE } from '../VisualizationTypes';
+import { BAR_CHART, COLUMN_CHART, LINE_CHART, PIE_CHART, AREA_CHART, TABLE, DONUT_CHART } from '../VisualizationTypes';
 
 function getPoPMeasureIdentifier(measure) {
     return get(measure, ['definition', 'popMeasure', 'measureIdentifier']);
@@ -54,6 +54,7 @@ export function getClickableElementNameByChartType(type) {
         case COLUMN_CHART:
         case BAR_CHART:
             return 'bar';
+        case DONUT_CHART:
         case PIE_CHART:
             return 'slice';
         case TABLE:

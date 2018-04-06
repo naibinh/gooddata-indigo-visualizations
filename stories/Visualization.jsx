@@ -36,6 +36,7 @@ class DynamicVisualization extends React.Component {
             'bar',
             'line',
             'pie',
+            'donut',
             'area'
         ];
 
@@ -207,6 +208,21 @@ storiesOf('Visualization', module)
                     {...dataSet}
                     config={{
                         type: 'pie'
+                    }}
+                    onDataTooLarge={f => f}
+                />
+            )
+        );
+    })
+    .add('visualization donut chart with metrics only', () => {
+        const dataSet = fixtures.pieChartWithMetricsOnly;
+
+        return screenshotWrap(
+            wrap(
+                <Visualization
+                    {...dataSet}
+                    config={{
+                        type: 'donut'
                     }}
                     onDataTooLarge={f => f}
                 />

@@ -16,14 +16,16 @@ import { getBarConfiguration } from './highcharts/barConfiguration';
 import { getColumnConfiguration } from './highcharts/columnConfiguration';
 import { getCustomizedConfiguration } from './highcharts/customConfiguration';
 import { getPieConfiguration } from './highcharts/pieConfiguration';
+import { getDonutConfiguration } from './highcharts/donutConfiguration';
 import { getAreaConfiguration } from './highcharts/areaConfiguration';
-import { LINE_CHART, BAR_CHART, COLUMN_CHART, PIE_CHART, AREA_CHART } from '../VisualizationTypes';
+import { LINE_CHART, BAR_CHART, COLUMN_CHART, PIE_CHART, DONUT_CHART, AREA_CHART } from '../VisualizationTypes';
 
 const chartConfigurationMap = {
     [LINE_CHART]: getLineConfiguration,
     [BAR_CHART]: getBarConfiguration,
     [COLUMN_CHART]: getColumnConfiguration,
     [PIE_CHART]: getPieConfiguration,
+    [DONUT_CHART]: getDonutConfiguration,
     [AREA_CHART]: getAreaConfiguration
 };
 
